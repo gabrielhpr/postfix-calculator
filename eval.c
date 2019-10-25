@@ -272,7 +272,7 @@ eval (CelObjeto *iniPosfixa, Bool mostrePilhaExecucao) {
                         resul = pow(b,a);
                         break;
                     case(OPER_DIVISAO_INT):
-                        resul = (int) b/a;
+                        resul = (int) b/ (int)a;
                         break;
                     case(OPER_MAIOR):
                         resul = b > a;
