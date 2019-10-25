@@ -69,35 +69,32 @@ main(int argc, char *argv[])
 
     /*-------------------------------------------------------------*/
     /* 1 pegue as opcoes da linha de comando */
-    while (--argc) 
-    {
-	if      (!strncmp(argv[argc], "-h", 2)) mostreUso(argv[0]);
-	else if (!strncmp(argv[argc], "-i", 2)) modoInterativo      = TRUE;
-	else if (!strncmp(argv[argc], "-l", 2)) mostreItensLexicos  = TRUE;
-	else if (!strncmp(argv[argc], "-v", 2)) mostreValores       = TRUE;
-	else if (!strncmp(argv[argc], "-p", 2)) mostrePilhaExecucao = TRUE;
-	else if (!strncmp(argv[argc], "-s", 2))
-	{  /* teremos um arquivo com as instrucoes */
-	    modoInterativo = FALSE;
-	    nomeScript     = argv[argc]+2; 
-	}
-	else 
-	{ /* opcao invalida */
-	    fprintf(stderr, "%s: opcao invalida '%s'\n", nomePrograma, argv[argc]); 
-	    mostreUso(nomePrograma); 
-	}	
+    while (--argc) {
+		if      (!strncmp(argv[argc], "-h", 2)) mostreUso(argv[0]);
+		else if (!strncmp(argv[argc], "-i", 2)) modoInterativo      = TRUE;
+		else if (!strncmp(argv[argc], "-l", 2)) mostreItensLexicos  = TRUE;
+		else if (!strncmp(argv[argc], "-v", 2)) mostreValores       = TRUE;
+		else if (!strncmp(argv[argc], "-p", 2)) mostrePilhaExecucao = TRUE;
+		else if (!strncmp(argv[argc], "-s", 2)) {  
+			/* teremos um arquivo com as instrucoes */
+	    	modoInterativo = FALSE;
+	    	nomeScript     = argv[argc]+2; 
+		}
+		else {
+			/* opcao invalida */
+	    	fprintf(stderr, "%s: opcao invalida '%s'\n", nomePrograma, argv[argc]); 
+	    	mostreUso(nomePrograma); 
+		}	
     }
 
     /*-------------------------------------------------------------*/
     /* 2 verifique se ha' um scritp a ser interpretado */
-    if (!modoInterativo)
-    {  
-	fEntrada = fopen(nomeScript, "r");
-	if (fEntrada == NULL) 
-	{
-	    printf("Nao consegui abrir o arquivo '%s'\n", nomeScript);
-	    exit(EXIT_FAILURE);
-	}
+    if (!modoInterativo) {  
+		fEntrada = fopen(nomeScript, "r");
+		if (fEntrada == NULL) {
+	    	printf("Nao consegui abrir o arquivo '%s'\n", nomeScript);
+	    	exit(EXIT_FAILURE);
+		}
     }
 
     /*------------------------------------------------------------*/
@@ -107,83 +104,74 @@ main(int argc, char *argv[])
     printf("[GCC %s] on %s\n", __VERSION__, SYSTEM);
 
     /* mostre o prompt se o modo e' iterativo */
-    if (modoInterativo)
-    {
-	printf(">>> "); /* prompt */
+    if (modoInterativo) {
+		printf(">>> "); /* prompt */
     }	   
 
     /*------------------------------------------------------------*/
     /* 4 interprete cada uma das linhas dadas */
-    while (fgets(linha, MAX_TAMANHO, fEntrada) != NULL) 
-    {
-	/* 4.1 fila com a representacao de uma expressao posfixa */
-	CelObjeto *iniFila   = NULL; 
-	CelObjeto *resultado = NULL; 
-	/* 4.2 imprima a linha */
-	if (!modoInterativo)
-	{
-	    printf("Linha %d: %s", ++nLinha, linha);
+    while (fgets(linha, MAX_TAMANHO, fEntrada) != NULL) {
+		/* 4.1 fila com a representacao de uma expressao posfixa */
+		CelObjeto *iniFila   = NULL; 
+		CelObjeto *resultado = NULL; 
+		/* 4.2 imprima a linha */
+		if (!modoInterativo) {
+			printf("Linha %d: %s", ++nLinha, linha);
+		}
+
+		/* 4.3 construa a fila de itens lexicos e mostre os itens
+				se o programa tiver sido chamado com a opcao "-l" */
+		iniFila = crieFilaItens(linha);
+		if (iniFila && mostreItensLexicos) {
+			/* TAREFA: a funcao a seguir deve ser escrita;
+			veja o modulo objetos.c */
+			mostreListaObjetos(iniFila, ITENS);
+		}
+	
+		/* 4.4 substitua os itens por valores */
+		/* TAREFA: a funcao a seguir deve ser escrita;
+		veja o modulo eval.c */
+		itensParaValores(iniFila); 
+		if (iniFila && mostreValores) {
+				/* TAREFA: a funcao a seguir deve ser escrita;
+				veja o modulo objetos.c */ 
+			mostreListaObjetos(iniFila, VALORES);
+		}
+        
+		/* 4.5 calcule o valor da expressao posfixa */
+		/* TAREFA: a funcao a seguir deve ser escrita;
+		veja o modulo eval.c */
+		resultado = eval(iniFila, mostrePilhaExecucao);
+
+		/* 4.6 mostre o resultado/valor da expressao */
+		if (resultado) { 
+				/* TAREFA: a funcao a seguir deve ser escrita;
+				veja o modulo objetos.c */
+			mostreValor(resultado);
+			freeObjeto(resultado);
+		}
+        
+		/* acho que essa pulada de linha e' para algo ficar bonito */ 
+		if (!modoInterativo) {
+			printf("\n");
+		} 
+	
+		/* 4.7 libere os itens da Fila */
+			/*     idealmente so' deveria liberar a celula cabeca */
+		/* TAREFA: a funcao a seguir deve ser escrita;
+		veja o modulo util.c */
+		freeListaObjetos(iniFila); 
+		if (modoInterativo) {
+			printf(">>> "); /* prompt */
+		}	   
+	}
+		
+	if (modoInterativo) {
+		printf("\n"); 
 	}
 
-	/* 4.3 construa a fila de itens lexicos e mostre os itens
-               se o programa tiver sido chamado com a opcao "-l" */
-	iniFila = crieFilaItens(linha);
-	if (iniFila && mostreItensLexicos)
-	{
-	    /* TAREFA: a funcao a seguir deve ser escrita;
-	       veja o modulo objetos.c */
-	    mostreListaObjetos(iniFila, ITENS);
-	}
-	
-	/* 4.4 substitua os itens por valores */
-	/* TAREFA: a funcao a seguir deve ser escrita;
-	   veja o modulo eval.c */
-	itensParaValores(iniFila); 
-	if (iniFila && mostreValores)
-	{
-            /* TAREFA: a funcao a seguir deve ser escrita;
-               veja o modulo objetos.c */ 
- 	    mostreListaObjetos(iniFila, VALORES);
-	}
-        
-	/* 4.5 calcule o valor da expressao posfixa */
-	/* TAREFA: a funcao a seguir deve ser escrita;
-	   veja o modulo eval.c */
-	resultado = eval(iniFila, mostrePilhaExecucao); 
-        
-	/* 4.6 mostre o resultado/valor da expressao */
-	if (resultado)
-	{ 
-            /* TAREFA: a funcao a seguir deve ser escrita;
-               veja o modulo objetos.c */
-	    mostreValor(resultado);
-	    freeObjeto(resultado);
-	}
-        
-	/* acho que essa pulada de linha e' para algo ficar bonito */ 
-	if (!modoInterativo)
-	{
-	    printf("\n");
-	} 
-	
-	/* 4.7 libere os itens da Fila */
-        /*     idealmente so' deveria liberar a celula cabeca */
-	/* TAREFA: a funcao a seguir deve ser escrita;
-	   veja o modulo util.c */
-	freeListaObjetos(iniFila); 
-	if (modoInterativo)
-	{
-	    printf(">>> "); /* prompt */
-	}	   
-    }
-    
-    if (modoInterativo)
-    {
-	printf("\n"); 
-    }
-
-    fclose(fEntrada);
-    return EXIT_SUCCESS;
+	fclose(fEntrada);
+	return EXIT_SUCCESS;
 }
 
 /*---------------------------------------------------------------*/

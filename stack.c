@@ -47,8 +47,13 @@ int stackEmpty(Stack s) {
 
 void stackPush(Stack s, CelObjeto* celObj) {
   Stack aux = s->prox;
-  s->prox = celObj;
-  celObj->prox = aux;
+  Stack nova = mallocSafe(sizeof(CelObjeto));
+  nova->categoria = celObj->categoria;
+  nova->valor.pStr = celObj->valor.pStr;
+  nova->valor.vInt = celObj->valor.vInt;
+  nova->valor.vFloat = celObj->valor.vFloat;
+  s->prox = nova;
+  nova->prox = aux;
 }
 
 CelObjeto* stackPop(Stack s) {

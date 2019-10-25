@@ -237,7 +237,7 @@ eval (CelObjeto *iniPosfixa, Bool mostrePilhaExecucao) {
     double a,b,resul;
     resul = 0;
 
-    while(pontAuxFila != NULL && !stackEmpty(s)) {
+    while(pontAuxFila != NULL) {
         /*É um valor*/
         if(pontAuxFila->categoria == FLOAT) {
             /*Empilha o valor*/
@@ -263,43 +263,47 @@ eval (CelObjeto *iniPosfixa, Bool mostrePilhaExecucao) {
                         resul = a != b;
                         break;
                     case(OPER_MAIOR_IGUAL):
-                        resul = a >= b;
+                        resul = b >= a;
                         break;
                     case(OPER_MENOR_IGUAL):
-                        resul = a <= b;
+                        resul = b <= a;
                         break;
                     case(OPER_EXPONENCIACAO):
-                        resul = pow(a,b);
+                        resul = pow(b,a);
                         break;
                     case(OPER_DIVISAO_INT):
-                        resul = (int) a/b;
+                        resul = (int) b/a;
                         break;
                     case(OPER_MAIOR):
-                        resul = a > b;
+                        resul = b > a;
                         break;
                     case(OPER_MENOR):
-                        resul = a < b;
+                        resul = b < a;
                         break;
                     case(OPER_RESTO_DIVISAO):
-                        resul = (int)a % (int)b;
+                        printf("Tenho que arrumar o resto da divisão");
+                        /*Arrumar o resto da divisao*/
+                        resul = (int)b % (int)a;
                         break;
                     case(OPER_MULTIPLICACAO):
                         resul = a * b;
                         break;
                     case(OPER_DIVISAO):
-                        resul = a / b;
+                        resul = b / a;
                         break;
                     case(OPER_ADICAO):
                         resul = a + b;
                         break;
                     case(OPER_SUBTRACAO):
-                        resul = a - b;
+                        resul = (b - a);
                         break;
                     case(OPER_LOGICO_AND):
-                        resul = a && b;
+                        resul = (b && a);
                         break;
                     case(OPER_LOGICO_OR):
-                        resul = a || b;
+                        /*Arrumar o or*/
+                        printf("Tenho que arrumar o or");
+                        resul = (b || a);
                         break;
                     default:
                         printf("Esse default evita os warnings\n");
@@ -328,6 +332,7 @@ eval (CelObjeto *iniPosfixa, Bool mostrePilhaExecucao) {
                 stackPush(s, obj);
             }
         }
+        pontAuxFila = pontAuxFila->prox;
     }
     return stackTop(s);
 }

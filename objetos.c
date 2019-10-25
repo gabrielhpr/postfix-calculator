@@ -184,9 +184,8 @@ freeListaObjetos(CelObjeto *iniLista) {
 
 void
 mostreValor(CelObjeto *pValor) {
-    printf("Chegou aqui na printagem");
     if(pValor->categoria == FLOAT) {
-        printf("%f", pValor->valor.vFloat);
+        printf("%f\n", pValor->valor.vFloat);
     }
 }
 
