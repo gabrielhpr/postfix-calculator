@@ -35,6 +35,7 @@
 Stack stackInit() {
   /* Célula cabeça */
   Stack p = mallocSafe(sizeof(CelObjeto));
+  p->prox = NULL;
   return p;
 }
 
@@ -49,8 +50,8 @@ void stackPush(Stack s, CelObjeto* celObj) {
   Stack aux = s->prox;
   Stack nova = mallocSafe(sizeof(CelObjeto));
   nova->categoria = celObj->categoria;
-  nova->valor.pStr = celObj->valor.pStr;
-  nova->valor.vInt = celObj->valor.vInt;
+  /*nova->valor.pStr = celObj->valor.pStr;*/
+  /*nova->valor.vInt = celObj->valor.vInt;*/
   nova->valor.vFloat = celObj->valor.vFloat;
   s->prox = nova;
   nova->prox = aux;
@@ -69,28 +70,32 @@ CelObjeto* stackTop(Stack s) {
 }
 
 void stackFree(Stack s) {
-  Stack aux = s->prox;
-  while(aux != NULL){
+  Stack aux = s;
+  while(s != NULL){
     aux = aux->prox;
     printf("chegou no free do stack");
-    free(s->prox);
-    s->prox = aux;
+    freeObjeto(s);
+    s = aux;
   }
 }
 
-/*
+
 void stackDump(Stack s) {
   Stack aux = s->prox;
-  printf("Pilha: ");
+  printf("=====================\n");
+  printf("Pilha de execução: \n");
   if(aux == NULL){
-    printf("vazia.");
+    printf("vazia.\n");
     return;
   }
+  printf("valor\n");
+  printf(". . . . . . . . .\n");
   while(aux != NULL) {
-    printf("");
+    printf("%f\n", aux->valor.vFloat);
+    aux = aux->prox;
   }
 }
-*/
+
 
 
 /* 

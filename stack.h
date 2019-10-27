@@ -49,7 +49,7 @@ void stackPush(Stack, CelObjeto*);
 CelObjeto* stackPop(Stack);
 CelObjeto* stackTop(Stack);
 void stackFree(Stack);
-/*void stackDump(Stack);*/
+void stackDump(Stack);
 
 /*
  * TAREFA

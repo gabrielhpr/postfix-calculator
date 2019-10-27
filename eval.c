@@ -163,27 +163,32 @@ static const int precedencia[MAX_OPERADORES] =
 void
 itensParaValores(CelObjeto *iniFilaItens) {
     CelObjeto* pontAuxiliar = iniFilaItens->prox;
+    double auxiliar;
     while (pontAuxiliar != NULL) {
         if(pontAuxiliar->categoria == INT_STR) {
             /*Transforma a string de valor.pStr, para um float em valor.vFloat*/
-            pontAuxiliar->valor.vFloat = atof(pontAuxiliar->valor.pStr);
+            auxiliar = atof(pontAuxiliar->valor.pStr);
+            /*Libera a string INT_STR*/
+            free(pontAuxiliar->valor.pStr);
+            pontAuxiliar->valor.vFloat = auxiliar;
             /*Altera a categoria do CelObjeto*/
             pontAuxiliar->categoria = FLOAT;
-            /*Libera a string INT_STR*/
             /*free(pontAuxiliar->valor.pStr);*/
         }
         else if(pontAuxiliar->categoria == FLOAT_STR) {
-            pontAuxiliar->valor.vFloat = atof(pontAuxiliar->valor.pStr);
+            auxiliar = atof(pontAuxiliar->valor.pStr);
+            free(pontAuxiliar->valor.pStr);
+            pontAuxiliar->valor.vFloat = auxiliar;
             pontAuxiliar->categoria = FLOAT;
-            /*free(pontAuxiliar->valor.pStr);*/
         }
         else if(pontAuxiliar->categoria == BOOL_STR) {
-            pontAuxiliar->valor.vFloat = atof(pontAuxiliar->valor.pStr);
+            auxiliar = atof(pontAuxiliar->valor.pStr);
+            pontAuxiliar->valor.vFloat = auxiliar;
             pontAuxiliar->categoria = FLOAT;
         }
         /*Os OPERADORES pertencem ao intervalo [0,18], da lista de categorias*/
         else if(pontAuxiliar->categoria >= 0 && pontAuxiliar->categoria <= 18) {
-            pontAuxiliar->valor.vInt = precedencia[atoi(pontAuxiliar->valor.pStr)];
+            pontAuxiliar->valor.vInt = precedencia[pontAuxiliar->categoria];
         }
         /*Vai para o próximo CelObjeto*/
         pontAuxiliar = pontAuxiliar->prox;
@@ -242,18 +247,29 @@ eval (CelObjeto *iniPosfixa, Bool mostrePilhaExecucao) {
         if(pontAuxFila->categoria == FLOAT) {
             /*Empilha o valor*/
             stackPush(s, pontAuxFila);
+            /*Exibe a pilha de execução*/
+            if(mostrePilhaExecucao == TRUE)
+                stackDump(s);
         }
         /*É um operador*/
         else if(pontAuxFila->categoria >= 0 && pontAuxFila->categoria <= 18) {
             /*Operadores de dois operandos*/
             if(pontAuxFila->categoria != 13 && pontAuxFila->categoria < 16) {
 
-                /*Pega o elemetno do topo*/
+                /*Pega o elemento do topo*/
                 obj = stackPop(s);
                 a = obj->valor.vFloat;
+                /*Libera o CelObjeto do primeiro operando, pois é possível armazenar
+                o valor da operação no segundo operando*/
+                freeObjeto(obj);
+                if(mostrePilhaExecucao == TRUE)
+                    stackDump(s);
+                    
                 /*Pega o segundo elemento do topo*/
                 obj = stackPop(s);
                 b = obj->valor.vFloat;
+                if(mostrePilhaExecucao == TRUE)
+                    stackDump(s);
 
                 switch(pontAuxFila->categoria) {
                     case(OPER_IGUAL):
@@ -281,9 +297,7 @@ eval (CelObjeto *iniPosfixa, Bool mostrePilhaExecucao) {
                         resul = b < a;
                         break;
                     case(OPER_RESTO_DIVISAO):
-                        printf("Tenho que arrumar o resto da divisão");
-                        /*Arrumar o resto da divisao*/
-                        resul = (int)b % (int)a;
+                        resul = fmod(b,a);
                         break;
                     case(OPER_MULTIPLICACAO):
                         resul = a * b;
@@ -301,8 +315,6 @@ eval (CelObjeto *iniPosfixa, Bool mostrePilhaExecucao) {
                         resul = (b && a);
                         break;
                     case(OPER_LOGICO_OR):
-                        /*Arrumar o or*/
-                        printf("Tenho que arrumar o or");
                         resul = (b || a);
                         break;
                     default:
@@ -311,28 +323,41 @@ eval (CelObjeto *iniPosfixa, Bool mostrePilhaExecucao) {
                 /*Atribui o resultado da operação ao CelObjeto*/
                 obj->valor.vFloat = resul;             
                 /*Empilha o resultado*/       
-                stackPush(s, obj);  
+                stackPush(s, obj); 
+                freeObjeto(obj);
+
+                if(mostrePilhaExecucao == TRUE)
+                    stackDump(s); 
             }
             /*Operador unário*/
             else if (pontAuxFila->categoria == 13 || pontAuxFila->categoria == 16) {
                 /*Menos(-) unário*/
                 /*Pega o elemento do topo*/
                 obj = stackPop(s);
+                if(mostrePilhaExecucao == TRUE)
+                    stackDump(s);
                 a = obj->valor.vFloat;
 
                 /*Decrementa o valor de a*/
                 if(pontAuxFila->categoria == 13)
-                    a--;
+                    a = a*(-1);
                 /*Nega o a*/
                 else
                     a = !a;
-                
+                /*Atualiza o valor do CelObjeto*/
                 obj->valor.vFloat = a;
                 /*Devolve o resultado para a pilha*/
                 stackPush(s, obj);
+                freeObjeto(obj);
+                if(mostrePilhaExecucao == TRUE)
+                    stackDump(s);
             }
         }
         pontAuxFila = pontAuxFila->prox;
     }
-    return stackTop(s);
+    /*Obtém o resultado das operações*/
+    obj = stackTop(s);
+    /*Libera a cabeça da pilha*/
+    freeObjeto(s);
+    return obj;
 }

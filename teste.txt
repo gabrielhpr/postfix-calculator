@@ -1,0 +1,46 @@
+# Este e' um comentario.
+# A semantica das operacoes foi copiada do Python (ou pelo menos
+# procurou ser copiada de Python. 
+
+#-----------------------------------------------
+# 1. _Alguns_ testes para operadores aritmeticos
+2.2_       # teste _ , '2.2_' e a maneira de escrever '-2.2'   
+1_         # teste _ , '_' e' menos unario 
+5       _  # teste _ 
+2 2.5   +  # teste +
+2 3     -  # teste -
+2.1 2   *  # teste *
+6.4 .8  /  # teste /
+6 4     /  # teste / , a semantica de Python e diferente da do C
+2  3   **  # teste **, isso nao existe em C    
+5 2     // # teste //, isto nao existe em C
+5 2     %  # teste % , a semantica de Python e diferente da do C
+5.1 2.2 %  # teste % novamente, a semantica de Python e diferente da de C
+
+#------------------------------------------------
+# 2. _Alguns_ testes para operadores relacionais
+# A seguir, se as repostas forem 0.0 para False ou 1.0 para True 
+# esta perfeito. 
+
+2 2      ==   # teste ==
+2 1_     ==   # teste ==, '1_' e a maneira de escrever '-1' 
+5 5      !=   # teste !=
+2 3      !=   # teste !=      
+1.2 2    >    # teste >
+1.1 1    <    # teste <  
+2 2      <=   # teste <=
+2 3      >=   # teste >=
+1.2_ 1.2 >=   # teste >= 
+#---------------------------------------------------
+# 3. _Alguns_ testes para para operadores logicos 
+# A seguir, se as repostas forem 0.0 para False ou 1.0 para True 
+# esta perfeito. 
+# Nao e esperado que seu programa imprime True ou False
+3.1    not # teste not, se a resposta for 1.0 esta ok  
+0      not # teste not novamente
+1  3   and # teste and, se a resposta for 1.0 esta ok
+2  0   and # teste and, se a resposta for 0.0 esta ok
+1  5.1 and # teste and, se a resposta for 1.0 esta ok
+0  3   and # teste and, se a resposta for 0.0 esta ok
+1  0   or  # teste or , se a resposta for 1.0 esta ok
+0  1   or  # teste or , se a resposta for 1.0 esta ok

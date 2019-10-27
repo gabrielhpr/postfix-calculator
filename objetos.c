@@ -244,18 +244,18 @@ mostreValor(CelObjeto *pValor) {
 void
 mostreObjeto(CelObjeto *pObj, int tipoLista) {
     if(tipoLista == ITENS){
-        printf(" %s ", pObj->valor.pStr);
-        printf(" %s \n", nomeCategoria[pObj->categoria]);
+        printf(" '%s' ", pObj->valor.pStr);
+        printf(" (%s) \n", nomeCategoria[pObj->categoria]);
     }
     else if (tipoLista == VALORES) {
         if(pObj->categoria == FLOAT) {
             printf(" %f ", pObj->valor.vFloat);
-            printf(" %s \n", nomeCategoria[pObj->categoria]);
+            printf(" (%s) \n", nomeCategoria[pObj->categoria]);
         }
         /*Os enums de Operações possuem valores no intervalo [0,18]*/
         else if(pObj->categoria >= 0 && pObj->categoria <= 18) {
             printf(" prec=%d ", pObj->valor.vInt);
-            printf(" %s \n", nomeCategoria[pObj->categoria]);
+            printf(" (%s) \n", nomeCategoria[pObj->categoria]);
         }
     }    
 }
@@ -318,6 +318,7 @@ mostreListaObjetos (CelObjeto *iniLista, int tipoLista) {
             mostreObjeto(pontAux, tipoLista);
             pontAux = pontAux->prox;
         }
+        printf("\n");
     }
     else if (tipoLista == VALORES) {
         printf("==================\n");
@@ -328,5 +329,6 @@ mostreListaObjetos (CelObjeto *iniLista, int tipoLista) {
             mostreObjeto(pontAux, tipoLista);
             pontAux = pontAux->prox;
         }
+        printf("\n");
     }
 }    
