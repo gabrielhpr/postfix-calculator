@@ -73,7 +73,6 @@ void stackFree(Stack s) {
   Stack aux = s;
   while(s != NULL){
     aux = aux->prox;
-    printf("chegou no free do stack");
     freeObjeto(s);
     s = aux;
   }
